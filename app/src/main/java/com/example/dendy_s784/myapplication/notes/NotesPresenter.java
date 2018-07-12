@@ -74,9 +74,6 @@ public class NotesPresenter implements NotesContract.Presenter{
                         }
                     }
                     //some step required
-                    if (showLoadingUI) {
-                        mNotesView.setLoadingIndicator(false);
-                    }
                     processNotes(notesToShow);
                 }
                 @Override
@@ -85,6 +82,9 @@ public class NotesPresenter implements NotesContract.Presenter{
                 }
             }
         );
+        if (showLoadingUI) {
+            mNotesView.setLoadingIndicator(false);
+        }
     }
 
     private void processNotes(List<Note> notes) {

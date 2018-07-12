@@ -16,8 +16,6 @@ public class AddEditNotesActivity extends AppCompatActivity {
 
     public static final String SHOULD_LOAD_DATA_FROM_REPO_KEY = "SHOULD_LOAD_DATA_FROM_REPO_KEY";
 
-    private AddEditNotePresenter mAddEditNotePresenter;
-
     private ActionBar mActionBar;
 
     private AddEditNotePresenter mAddEditTaskPresenter;

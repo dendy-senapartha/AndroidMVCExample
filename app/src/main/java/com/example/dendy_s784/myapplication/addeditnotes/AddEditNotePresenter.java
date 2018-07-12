@@ -74,7 +74,10 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
 
     @Override
     public void populateNote() {
-
+        if (isNewNote()) {
+            throw new RuntimeException("populateNote() was called but note is new.");
+        }
+        mNotesRepository.getNote(mNoteId, this);
     }
 
     @Override
@@ -84,12 +87,19 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
 
     @Override
     public void start() {
-
+        if (!isNewNote() && mIsDataMissing) {
+            populateNote();
+        }
     }
 
     @Override
     public void onNoteLoaded(Note task) {
+        // The view may not be able to handle UI updates anymore
 
+        mAddNoteView.setTitle(task.getTitle());
+        mAddNoteView.setDescription(task.getDescription());
+
+        mIsDataMissing = false;
     }
 
     @Override

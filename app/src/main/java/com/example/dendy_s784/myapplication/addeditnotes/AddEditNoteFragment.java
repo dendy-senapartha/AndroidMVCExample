@@ -79,17 +79,12 @@ public class AddEditNoteFragment extends Fragment implements AddEditNoteContract
 
     @Override
     public void setTitle(String title) {
-
+        mTitle.setText(title);
     }
 
     @Override
     public void setDescription(String description) {
-
-    }
-
-    @Override
-    public boolean isActive() {
-        return false;
+        mDescription.setText(description);
     }
 
     @Override

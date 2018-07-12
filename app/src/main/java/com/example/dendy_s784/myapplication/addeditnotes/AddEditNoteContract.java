@@ -14,8 +14,6 @@ public interface AddEditNoteContract {
         void setTitle(String title);
 
         void setDescription(String description);
-
-        boolean isActive();
     }
 
     interface Presenter extends BasePresenter {

@@ -2,6 +2,7 @@ package com.example.dendy_s784.myapplication.notes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.dendy_s784.myapplication.R;
+import com.example.dendy_s784.myapplication.addeditnotes.AddEditNoteFragment;
 import com.example.dendy_s784.myapplication.addeditnotes.AddEditNotesActivity;
 import com.example.dendy_s784.myapplication.data.Note;
 
@@ -31,6 +33,9 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NotesFragment extends Fragment implements NotesContract.View {
+
+    @NonNull
+    private static final int REQUEST_EDIT_NOTE = 1;
 
     private NotesContract.Presenter mPresenter;
 
@@ -133,14 +138,16 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         inflater.inflate(R.menu.notes_fragment_menu, menu);
     }
 
-
     @Override
-    public void showNoteDetailsUi(String taskId) {
+    public void showNoteDetailsUi(String noteId) {
         // in it's own Activity, since it makes more sense that way and it gives us the flexibility
         // to show some Intent stubbing.
         /*Intent intent = new Intent(getContext(), TaskDetailActivity.class);
         intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
         startActivity(intent);*/
+        Intent intent = new Intent(getContext(), AddEditNotesActivity.class);
+        intent.putExtra(AddEditNoteFragment.ARGUMENT_EDIT_NOTE_ID, noteId);
+        startActivityForResult(intent, REQUEST_EDIT_NOTE);
     }
 
     @Override
