@@ -9,3 +9,7 @@
 /captures
 .externalNativeBuild
 /.idea/caches
+/.idea
+/AndroidMVCExample.iml
+.idea
+/app/build.gradle
