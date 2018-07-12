@@ -1,6 +1,7 @@
 package com.example.dendy_s784.myapplication.data.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.example.dendy_s784.myapplication.data.Note;
 
@@ -22,7 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class NotesRepository implements NotesDataSource{
     private static NotesRepository INSTANCE = null;
 
-    private final NotesDataSource mNotesRemoteDataSource;
+    //used to load remote data source from inet. no we dont use it yet
+    //private final NotesDataSource mNotesRemoteDataSource;
 
     private final NotesDataSource mNotesLocalDataSource;
 
@@ -38,9 +40,9 @@ public class NotesRepository implements NotesDataSource{
     boolean mCacheIsDirty = false;
 
     // Prevent direct instantiation.
-    private NotesRepository(@NonNull NotesDataSource tasksRemoteDataSource,
+    private NotesRepository(//@NonNull NotesDataSource tasksRemoteDataSource,
                             @NonNull NotesDataSource tasksLocalDataSource) {
-        mNotesRemoteDataSource = checkNotNull(tasksRemoteDataSource);
+        //mNotesRemoteDataSource = checkNotNull(tasksRemoteDataSource);
         mNotesLocalDataSource = checkNotNull(tasksLocalDataSource);
     }
 
@@ -48,20 +50,19 @@ public class NotesRepository implements NotesDataSource{
      * singleton method
      * Returns the single instance of this class, creating it if necessary.
      *
-     * @param notesRemoteDataSource the backend data source
      * @param notesLocalDataSource  the device storage data source
      * @return the {@link NotesRepository} instance
      */
-    public static NotesRepository getInstance(NotesDataSource notesRemoteDataSource,
+    public static NotesRepository getInstance(//NotesDataSource notesRemoteDataSource,
                                               NotesDataSource notesLocalDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new NotesRepository(notesRemoteDataSource, notesLocalDataSource);
+            INSTANCE = new NotesRepository(/*notesRemoteDataSource,*/ notesLocalDataSource);
         }
         return INSTANCE;
     }
 
     /**
-     * Used to force {@link #getInstance(NotesDataSource, NotesDataSource)} to create a new instance
+     * Used to force {@link #getInstance(NotesDataSource)} to create a new instance
      * next time it's called.
      */
     public static void destroyInstance() {
@@ -78,7 +79,6 @@ public class NotesRepository implements NotesDataSource{
     @Override
     public void getNotes(@NonNull final LoadNoteCallback callback) {
         checkNotNull(callback);
-
         // Respond immediately with cache if available and not dirty
         if (mCachedNotes != null && !mCacheIsDirty) {
             callback.onNotesLoaded(new ArrayList<>(mCachedNotes.values()));
@@ -86,11 +86,11 @@ public class NotesRepository implements NotesDataSource{
         }
 
         if (mCacheIsDirty) {
-            // If the cache is dirty we need to fetch new data from the network.
-            getNotesFromRemoteDataSource(callback);
+            // If the cache is dirty we need to fetch new data.
+            getNotesDataSource(callback);
         } else {
             // Query the local storage if available. If not, query the network.
-            mNotesRemoteDataSource.getNotes(new LoadNoteCallback() {
+            mNotesLocalDataSource.getNotes(new LoadNoteCallback() {
                 @Override
                 public void onNotesLoaded(List<Note> notes) {
                     refreshCache(notes);
@@ -99,25 +99,55 @@ public class NotesRepository implements NotesDataSource{
 
                 @Override
                 public void onDataNotAvailable() {
-                    getNotesFromRemoteDataSource(callback);
+                    //getNotesDataSource(callback);
+                    callback.onDataNotAvailable();
                 }
             });
         }
     }
 
-    private void getNotesFromRemoteDataSource(@NonNull final LoadNoteCallback callback) {
-        mNotesRemoteDataSource.getNotes(new LoadNoteCallback() {
+    @Override
+    public void getNote(@NonNull String noteId, @NonNull final GetNoteCallback callback) {
+        checkNotNull(noteId);
+        checkNotNull(callback);
+        Note cachedTask = getNoteWithId(noteId);
+        // Respond immediately with cache if available
+        if (cachedTask != null) {
+            callback.onNoteLoaded(cachedTask);
+            return;
+        }
+        // Load from server/persisted if needed.
+        // Is the task in the local data source? If not, query the network.
+        mNotesLocalDataSource.getNote(noteId, new GetNoteCallback() {
+            @Override
+            public void onNoteLoaded(Note note) {
+                // Do in memory cache update to keep the app UI up to date
+                if (mCachedNotes == null) {
+                    mCachedNotes = new LinkedHashMap<>();
+                }
+                mCachedNotes.put(note.getId(), note);
+                callback.onNoteLoaded(note);
+            }
 
             @Override
-            public void onNotesLoaded(List<Note> tasks) {
-                refreshCache(tasks);
-                refreshLocalDataSource(tasks);
+            public void onDataNotAvailable() {
+                callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    private void getNotesDataSource(@NonNull final LoadNoteCallback callback) {
+        mNotesLocalDataSource.getNotes(new LoadNoteCallback() {
+            @Override
+            public void onNotesLoaded(List<Note> notes) {
+                refreshCache(notes);
+                refreshLocalDataSource(notes);
                 callback.onNotesLoaded(new ArrayList<>(mCachedNotes.values()));
             }
 
             @Override
             public void onDataNotAvailable() {
-
+                callback.onDataNotAvailable();
             }
         });
     }
@@ -134,16 +164,12 @@ public class NotesRepository implements NotesDataSource{
     }
 
     private void refreshLocalDataSource(List<Note> notes) {
-        mNotesRemoteDataSource.deleteAllNotes();
+        mNotesLocalDataSource.deleteAllNotes();
         for (Note task : notes) {
-            mNotesRemoteDataSource.saveNote(task);
+            mNotesLocalDataSource.saveNote(task);
         }
     }
 
-    @Override
-    public void getNote(@NonNull String taskId, @NonNull GetNoteCallback callback) {
-
-    }
 
     @Override
     public void saveNote(@NonNull Note note) {
@@ -202,5 +228,15 @@ public class NotesRepository implements NotesDataSource{
         mNotesLocalDataSource.deleteNotes(checkNotNull(taskId));
 
         mCachedNotes.remove(taskId);
+    }
+
+    @Nullable
+    private Note getNoteWithId(@NonNull String id) {
+        checkNotNull(id);
+        if (mCachedNotes == null || mCachedNotes.isEmpty()) {
+            return null;
+        } else {
+            return mCachedNotes.get(id);
+        }
     }
 }

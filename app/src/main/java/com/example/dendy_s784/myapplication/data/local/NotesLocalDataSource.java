@@ -38,7 +38,7 @@ public class NotesLocalDataSource implements NotesDataSource{
     }
 
     /**
-     * Note: {@link LoadNoteCallback#onDataNotAvailable()} is fired if the database doesn't exist
+     * Note: {@link LoadNoteCallback#onDataNotAvailable()} is fired if the local database error
      * or the table is empty.
      */
     @Override
@@ -53,10 +53,11 @@ public class NotesLocalDataSource implements NotesDataSource{
                 mAppExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (notes.isEmpty()) {
+                        //if (notes.isEmpty()) {
                             // This will be called if the table is new or just empty.
-                            callback.onDataNotAvailable();
-                        } else {
+                            //callback.onDataNotAvailable();
+                        //} else
+                            {
                             callback.onNotesLoaded(notes);
                         }
                     }
@@ -67,9 +68,32 @@ public class NotesLocalDataSource implements NotesDataSource{
         mAppExecutors.diskIO().execute(runnable);
     }
 
+    /**
+     * Note: {@link LoadNoteCallback#onDataNotAvailable()} is fired if the local database error
+     * or the table is empty.
+     */
     @Override
-    public void getNote(@NonNull String taskId, @NonNull GetNoteCallback callback) {
+    public void getNote(@NonNull final String noteId, @NonNull final GetNoteCallback callback) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final Note note= mNotesDao.getNoteById(noteId);
 
+                mAppExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //if (note != null) {
+                          //  callback.onNoteLoaded(note);
+                        //} else
+                            {
+                            callback.onDataNotAvailable();
+                        }
+                    }
+                });
+            }
+        };
+
+        mAppExecutors.diskIO().execute(runnable);
     }
 
     @Override
@@ -89,7 +113,7 @@ public class NotesLocalDataSource implements NotesDataSource{
         Runnable clearTasksRunnable = new Runnable() {
             @Override
             public void run() {
-                //TODO : need to delete based on list of marked item
+                //need to delete based on list of marked item
                 int markedNoteSize = markedNote.size();
                 for(int i=0 ; i<markedNoteSize ; i++)
                 {

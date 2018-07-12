@@ -112,7 +112,6 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         });
 
         setHasOptionsMenu(true);
-
         return  root;
     }
 
@@ -121,9 +120,6 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         switch (item.getItemId()) {
             case R.id.menu_delete_marked:
                 mPresenter.DeleteMarkedNotes(mMarkedNotes);
-                break;
-            case R.id.menu_filter:
-                showFilteringPopUpMenu();
                 break;
             case R.id.menu_refresh:
                 mPresenter.loadNotes(true);
@@ -137,31 +133,6 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         inflater.inflate(R.menu.notes_fragment_menu, menu);
     }
 
-    @Override
-    public void showFilteringPopUpMenu() {
-        PopupMenu popup = new PopupMenu(getContext(), getActivity().findViewById(R.id.menu_filter));
-        popup.getMenuInflater().inflate(R.menu.filter_notes, popup.getMenu());
-
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.active:
-                        mPresenter.setFiltering(NotesFilterType.ACTIVE_NOTES);
-                        break;
-                    case R.id.completed:
-                        mPresenter.setFiltering(NotesFilterType.COMPLETED_NOTES);
-                        break;
-                    default:
-                        mPresenter.setFiltering(NotesFilterType.ALL_NOTES);
-                        break;
-                }
-                mPresenter.loadNotes(false);
-                return true;
-            }
-        });
-
-        popup.show();
-    }
 
     @Override
     public void showNoteDetailsUi(String taskId) {
@@ -341,7 +312,6 @@ public class NotesFragment extends Fragment implements NotesContract.View {
 
         @Override
         public void onMarkedNoteClick(Note note) {
-            System.out.println("marked");
             if(isNoteMarked(note))
             {
                 mMarkedNotes.remove(note);

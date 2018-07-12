@@ -11,7 +11,7 @@ public interface NotesContract {
         void showNotes(List<Note> tasks);
 
         void showAddNote();
-        void showFilteringPopUpMenu();
+
         void showNoteDetailsUi(String taskId);
         void showAllFilterLabel();
         void setLoadingIndicator(boolean active);

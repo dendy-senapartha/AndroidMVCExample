@@ -16,7 +16,6 @@ public class Injection {
         ToDoDatabase database = ToDoDatabase.getInstance(context);
         //for now, using only local DB
         return NotesRepository.getInstance(
-                NotesLocalDataSource.getInstance(new AppExecutors(),database.notesDao()),
                 NotesLocalDataSource.getInstance(new AppExecutors(),database.notesDao())
         );
     }

@@ -65,23 +65,18 @@ public class NotesPresenter implements NotesContract.Presenter{
                     // We filter the tasks based on the requestType
                     for (Note note : notes) {
                         switch (mCurrentFiltering) {
-                            case ALL_NOTES:
-                                notesToShow.add(note);
-                                break;
+                           // case ALL_NOTES:
+                             //   notesToShow.add(note);
+                             //   break;
                             default:
                                 notesToShow.add(note);
                                 break;
                         }
-
                     }
-
                     //some step required
-
-
                     if (showLoadingUI) {
                         mNotesView.setLoadingIndicator(false);
                     }
-
                     processNotes(notesToShow);
                 }
                 @Override

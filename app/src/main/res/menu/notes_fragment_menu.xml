@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_filter"
-        android:title="Filter"
-        android:icon="@drawable/ic_filter_list"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/menu_delete_marked"
         android:title="Delete Marked Notes"
         app:showAsAction="never" />
