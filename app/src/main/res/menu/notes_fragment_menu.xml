@@ -7,8 +7,8 @@
         android:icon="@drawable/ic_filter_list"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menu_clear"
-        android:title="Clear Completed"
+        android:id="@+id/menu_delete_marked"
+        android:title="Delete Marked Notes"
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_refresh"

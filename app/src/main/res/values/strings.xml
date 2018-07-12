@@ -6,4 +6,5 @@
     <string name="label_all">All Notes</string>
     <string name="loading_notes_error">Error while loading tasks</string>
     <string name="no_notes_all">You have no Notes!</string>
+    <string name="marked_notes_delete">Marked notes deleted</string>
 </resources>

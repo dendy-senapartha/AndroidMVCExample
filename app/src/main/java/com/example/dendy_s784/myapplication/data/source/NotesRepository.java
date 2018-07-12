@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.example.dendy_s784.myapplication.data.Note;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,8 +159,25 @@ public class NotesRepository implements NotesDataSource{
     }
 
     @Override
-    public void clearCompletedNotes() {
+    public void deleteMarkedNotes(List<Note> markedNote) {
+        mNotesLocalDataSource.deleteMarkedNotes(markedNote);
 
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedNotes == null) {
+            mCachedNotes= new LinkedHashMap<>();
+        }
+        Iterator<Map.Entry<String, Note>> it = mCachedNotes.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Note> entry = it.next();
+            //need to delete based on list of marked notes
+            for (int i=0 ; i<markedNote.size(); i++)
+            {
+                if(markedNote.get(i).getId().equals(entry.getValue().getId()))
+                {
+                    it.remove();
+                }
+            }
+        }
     }
 
     @Override

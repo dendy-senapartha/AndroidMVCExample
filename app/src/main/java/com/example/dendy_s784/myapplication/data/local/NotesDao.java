@@ -58,11 +58,11 @@ public interface NotesDao {
      * @return the number of notes deleted. This should always be 1.
      */
     @Query("DELETE FROM Notes WHERE entryid = :noteId")
-    int deleteTaskById(String noteId);
+    int deleteNoteById(String noteId);
 
     /**
      * Delete all notes.
      */
     @Query("DELETE FROM Notes")
-    void deleteTasks();
+    void deleteNotes();
 }

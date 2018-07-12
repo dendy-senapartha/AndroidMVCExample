@@ -35,7 +35,7 @@ public interface NotesDataSource {
 
     void saveNote(@NonNull Note note);
 
-    void clearCompletedNotes();
+    void deleteMarkedNotes(List<Note> markedNote);
 
     void refreshNotes();
 

@@ -17,17 +17,16 @@ public interface NotesContract {
         void setLoadingIndicator(boolean active);
         void showLoadingNotesError();
         void showNoTasks();
+
+        void showMarkedNotesDelete();
     }
 
     interface Presenter extends BasePresenter{
         void loadNotes(boolean forceUpdate);
-
         void addNewNotes();
-
         void openNoteDetails(@NonNull Note requestedTask);
-
         void setFiltering(NotesFilterType requestType);
-
+        void DeleteMarkedNotes(List<Note> markedNote);
         NotesFilterType getFiltering();
     }
 }

@@ -43,6 +43,8 @@ public class NotesFragment extends Fragment implements NotesContract.View {
 
     private TextView mNoNotesAddView;
 
+    private List<Note> mMarkedNotes;
+
 
     public static NotesFragment newInstance(){
         return new NotesFragment();
@@ -51,6 +53,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
+        mMarkedNotes = new ArrayList<Note>(0);
         mListAdapter = new NotesAdapter(new ArrayList<Note>(0), mItemListener);
     }
 
@@ -116,8 +119,8 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_clear:
-                //mPresenter.clearCompleted();
+            case R.id.menu_delete_marked:
+                mPresenter.DeleteMarkedNotes(mMarkedNotes);
                 break;
             case R.id.menu_filter:
                 showFilteringPopUpMenu();
@@ -203,6 +206,11 @@ public class NotesFragment extends Fragment implements NotesContract.View {
                 R.drawable.ic_assignment_turned_in_24dp,
                 false
         );
+    }
+
+    @Override
+    public void showMarkedNotesDelete() {
+        showMessage(getString(R.string.marked_notes_delete));
     }
 
     private void showMessage(String message) {
@@ -306,12 +314,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
             completeCB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    /*
-                    if (!note.isCompleted()) {
-                        mItemListener.onCompleteTaskClick(task);
-                    } else {
-                        mItemListener.onActivateTaskClick(task);
-                    }*/
+                    mItemListener.onMarkedNoteClick(note);
                 }
             });
 
@@ -326,18 +329,41 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     }
 
     /**
-     * Listener for clicks on tasks in the ListView.
+     * Listener for clicks on notes in the ListView.
      */
     NoteItemListener mItemListener = new NoteItemListener() {
 
         @Override
         public void onNoteClick(Note clickedNote) {
+
             mPresenter.openNoteDetails(clickedNote);
         }
 
         @Override
-        public void onCompleteNoteClick(Note completedNote) {
+        public void onMarkedNoteClick(Note note) {
+            System.out.println("marked");
+            if(isNoteMarked(note))
+            {
+                mMarkedNotes.remove(note);
+            }
+            else
+            {
+                mMarkedNotes.add(note);
+            }
+        }
 
+        private boolean isNoteMarked(Note note)
+        {
+            boolean result = false;
+            int markedNoteSize = mMarkedNotes.size();
+            for (int i=0 ; i<markedNoteSize; i++)
+            {
+                if(mMarkedNotes.get(i).getId().equals(note.getId()))
+                {
+                    result = true;
+                }
+            }
+            return result;
         }
 
         @Override
@@ -351,7 +377,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
 
         void onNoteClick(Note clickedNote);
 
-        void onCompleteNoteClick(Note completedNote);
+        void onMarkedNoteClick(Note completedNote);
 
         void onActivateNoteClick(Note activatedNote);
     }

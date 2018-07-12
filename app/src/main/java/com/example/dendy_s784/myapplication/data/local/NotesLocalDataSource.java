@@ -85,8 +85,20 @@ public class NotesLocalDataSource implements NotesDataSource{
     }
 
     @Override
-    public void clearCompletedNotes() {
+    public void deleteMarkedNotes(final List<Note> markedNote) {
+        Runnable clearTasksRunnable = new Runnable() {
+            @Override
+            public void run() {
+                //TODO : need to delete based on list of marked item
+                int markedNoteSize = markedNote.size();
+                for(int i=0 ; i<markedNoteSize ; i++)
+                {
+                    mNotesDao.deleteNoteById(markedNote.get(i).getId());
+                }
+            }
+        };
 
+        mAppExecutors.diskIO().execute(clearTasksRunnable);
     }
 
     @Override
@@ -99,7 +111,7 @@ public class NotesLocalDataSource implements NotesDataSource{
         Runnable deleteRunnable = new Runnable() {
             @Override
             public void run() {
-                mNotesDao.deleteTasks();
+                mNotesDao.deleteNotes();
             }
         };
 
@@ -111,7 +123,7 @@ public class NotesLocalDataSource implements NotesDataSource{
         Runnable deleteRunnable = new Runnable() {
             @Override
             public void run() {
-                mNotesDao.deleteTaskById(noteId);
+                mNotesDao.deleteNoteById(noteId);
             }
         };
 

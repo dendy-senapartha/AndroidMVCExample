@@ -147,6 +147,13 @@ public class NotesPresenter implements NotesContract.Presenter{
         mCurrentFiltering = requestType;
     }
 
+    @Override
+    public void DeleteMarkedNotes(List<Note> markedNote) {
+        mNotesRepository.deleteMarkedNotes(markedNote);
+        mNotesView.showMarkedNotesDelete();
+        loadNotes(false,false);
+    }
+
     public NotesFilterType getFiltering()
     {
         return mCurrentFiltering;
