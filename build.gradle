@@ -40,6 +40,8 @@ ext {
     targetSdkVersion = 28
     compileSdkVersion = 28
     buildToolsVersion = '26.0.2'
+    rxjava = '2.0.6'
+    rxandroid = '2.0.1'
 
     // App dependencies
     supportLibraryVersion = '27.1.1'

@@ -30,6 +30,9 @@ dependencies {
     compile "com.android.support:design:$rootProject.supportLibraryVersion"
     compile "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     compile "com.google.guava:guava:$rootProject.guavaVersion"
+    compile "io.reactivex.rxjava2:rxjava:$rootProject.rxjava"
+    compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroid"
+    implementation "android.arch.persistence.room:rxjava2:$rootProject.roomVersion"
     compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
     // Dependencies for local unit tests

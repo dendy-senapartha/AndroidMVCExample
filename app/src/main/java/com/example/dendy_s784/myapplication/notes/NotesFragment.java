@@ -142,9 +142,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     public void showNoteDetailsUi(String noteId) {
         // in it's own Activity, since it makes more sense that way and it gives us the flexibility
         // to show some Intent stubbing.
-        /*Intent intent = new Intent(getContext(), TaskDetailActivity.class);
-        intent.putExtra(TaskDetailActivity.EXTRA_TASK_ID, taskId);
-        startActivity(intent);*/
+
         Intent intent = new Intent(getContext(), AddEditNotesActivity.class);
         intent.putExtra(AddEditNoteFragment.ARGUMENT_EDIT_NOTE_ID, noteId);
         startActivityForResult(intent, REQUEST_EDIT_NOTE);

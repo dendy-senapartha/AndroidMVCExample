@@ -10,6 +10,8 @@ import com.example.dendy_s784.myapplication.data.Note;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 
 /**
  * Data Access Object for the notes table.
@@ -21,19 +23,19 @@ public interface NotesDao {
     /**
      * Select all notes from the tasks table.
      *
-     * @return all notes.
+     * @return all notes wraped with javarx Maybe.
      */
     @Query("SELECT * FROM Notes")
-    List<Note> getNotes();
+    Maybe<List<Note>> getNotes();
 
     /**
      * Select a note by id.
      *
      * @param noteId the note id.
-     * @return the note with noteId.
+     * @return the note with noteId. Te result wraped with javarx Maybe.
      */
     @Query("SELECT * FROM Notes WHERE entryid = :noteId")
-    Note getNoteById(String noteId);
+    Maybe<Note> getNoteById(String noteId);
 
     /**
      * Insert a note in the database. If the note already exists, replace it.
