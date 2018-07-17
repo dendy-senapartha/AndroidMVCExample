@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.example.dendy_s784.myapplication.data.Note;
 import com.example.dendy_s784.myapplication.data.source.NotesDataSource;
-import com.example.dendy_s784.myapplication.utils.AppExecutors;
+//import com.example.dendy_s784.myapplication.utils.AppExecutors;
 
 import java.util.List;
 
@@ -25,21 +25,22 @@ public class NotesLocalDataSource implements NotesDataSource{
 
     private NotesDao mNotesDao;
 
-    private AppExecutors mAppExecutors;
+    //private AppExecutors mAppExecutors;
 
     // Prevent direct instantiation.
-    private NotesLocalDataSource(@NonNull AppExecutors appExecutors,
+    private NotesLocalDataSource(//@NonNull AppExecutors appExecutors,
                                  @NonNull NotesDao notesDao) {
-        mAppExecutors = appExecutors;
+       // mAppExecutors = appExecutors;
         mNotesDao = notesDao;
     }
 
-    public static NotesLocalDataSource getInstance(@NonNull AppExecutors appExecutors,
+    public static NotesLocalDataSource getInstance(//@NonNull AppExecutors appExecutors,
                                                    @NonNull NotesDao notesDao) {
         if (INSTANCE == null) {
             synchronized (NotesLocalDataSource.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new NotesLocalDataSource(appExecutors, notesDao);
+                    INSTANCE = new NotesLocalDataSource(//appExecutors,
+                            notesDao);
                 }
             }
         }

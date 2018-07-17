@@ -13,7 +13,7 @@ public interface NotesContract {
         void showAddNote();
 
         void showNoteDetailsUi(String taskId);
-        void showAllFilterLabel();
+        //void showAllFilterLabel();
         void setLoadingIndicator(boolean active);
         void showLoadingNotesError();
         void showNoTasks();
@@ -25,8 +25,8 @@ public interface NotesContract {
         void loadNotes(boolean forceUpdate);
         void addNewNotes();
         void openNoteDetails(@NonNull Note requestedTask);
-        void setFiltering(NotesFilterType requestType);
+        //void setFiltering(NotesFilterType requestType);
         void DeleteMarkedNotes(List<Note> markedNote);
-        NotesFilterType getFiltering();
+        //NotesFilterType getFiltering();
     }
 }

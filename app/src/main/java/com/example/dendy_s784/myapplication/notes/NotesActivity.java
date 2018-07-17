@@ -16,7 +16,7 @@ import com.example.dendy_s784.myapplication.utils.Injection;
 
 public class NotesActivity extends AppCompatActivity {
 
-    private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
+    //private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
 
     private DrawerLayout drawerLayout;
 
@@ -58,14 +58,15 @@ public class NotesActivity extends AppCompatActivity {
         // Create the presenter
         //presenter will fill the fragment using data taken remotely or locally
         mNotesPresenter = new NotesPresenter(
-                Injection.provideNotesRepository(getApplicationContext()),  notesFragment);
+                Injection.provideUseCaseHandler(),Injection.provideGetNotes(getApplicationContext()),
+                Injection.provideDeleteNote(getApplicationContext()),notesFragment);
 
-        // Load previously saved state, if available.
+        /* Load previously saved state, if available.
         if (savedInstanceState != null) {
             NotesFilterType currentFiltering =
                     (NotesFilterType) savedInstanceState.getSerializable(CURRENT_FILTERING_KEY);
             mNotesPresenter.setFiltering(currentFiltering);
-        }
+        }*/
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

@@ -59,10 +59,11 @@ public class AddEditNotesActivity extends AppCompatActivity {
             }
 
             // Create the presenter
-            mAddEditTaskPresenter = new AddEditNotePresenter(
+            mAddEditTaskPresenter = new AddEditNotePresenter(Injection.provideUseCaseHandler(),
                     noteId,
-                    Injection.provideNotesRepository(getApplicationContext()),
                     addEditNoteFragment,
+                    Injection.provideGetNote(getApplicationContext()),
+                    Injection.provideSaveNote(getApplicationContext()),
                     shouldLoadDataFromRepo);
         }
     }

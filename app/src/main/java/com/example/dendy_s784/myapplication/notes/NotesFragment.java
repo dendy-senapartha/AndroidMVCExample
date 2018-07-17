@@ -148,10 +148,10 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         startActivityForResult(intent, REQUEST_EDIT_NOTE);
     }
 
-    @Override
+   /*/ @Override
     public void showAllFilterLabel() {
         mFilteringLabelView.setText(getResources().getString(R.string.label_all));
-    }
+    }*/
 
     @Override
     public void setLoadingIndicator(final boolean active) {

@@ -2,27 +2,34 @@ package com.example.dendy_s784.myapplication.notes;
 
 import android.support.annotation.NonNull;
 
+import com.example.dendy_s784.myapplication.UseCase;
+import com.example.dendy_s784.myapplication.UseCaseHandler;
+import com.example.dendy_s784.myapplication.notes.domain.usecase.DeleteNote;
 import com.example.dendy_s784.myapplication.data.Note;
-import com.example.dendy_s784.myapplication.data.source.NotesRepository;
 import com.example.dendy_s784.myapplication.data.source.NotesDataSource;
-import com.example.dendy_s784.myapplication.utils.EspressoIdlingResource;
+import com.example.dendy_s784.myapplication.notes.domain.usecase.GetNotes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NotesPresenter implements NotesContract.Presenter{
-    private final NotesRepository mNotesRepository;
+    //private final NotesRepository mNotesRepository;
 
     private final NotesContract.View mNotesView;
+    private final GetNotes mGetNotes;
+    private final DeleteNote mDeleteNote;
 
-    private NotesFilterType mCurrentFiltering = NotesFilterType.ALL_NOTES;
-
+    //private NotesFilterType mCurrentFiltering = NotesFilterType.ALL_NOTES;
+    private final UseCaseHandler mUseCaseHandler;
     private boolean mFirstLoad = true;
 
-    public NotesPresenter(@NonNull NotesRepository notesRepository, @NonNull NotesContract.View notesView) {
-        mNotesRepository = checkNotNull(notesRepository, "tasksRepository cannot be null");
+    public NotesPresenter(@NonNull UseCaseHandler useCaseHandler,
+                          @NonNull GetNotes getNotes,
+                          @NonNull DeleteNote deleteNote, @NonNull NotesContract.View notesView) {
+        mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
+        mGetNotes = checkNotNull(getNotes, "getNotes cannot be null");
+        mDeleteNote = checkNotNull(deleteNote, "deleteNote cannot be null");
         mNotesView = checkNotNull(notesView, "notesView cannot be null!");
 
         mNotesView.setPresenter(this);
@@ -43,45 +50,27 @@ public class NotesPresenter implements NotesContract.Presenter{
         if (showLoadingUI) {
             mNotesView.setLoadingIndicator(true);
         }
-        if (forceUpdate) {
-            mNotesRepository.refreshNotes();
-        }
 
-        // The network request might be handled in a different thread so make sure Espresso knows
-        // that the app is busy until the response is handled.
-        EspressoIdlingResource.increment(); // App is busy until further notice
-
-        mNotesRepository.getNotes(new NotesDataSource.LoadNoteCallback() {
-                @Override
-                public void onNotesLoaded(List<Note> notes) {
-                    List<Note> notesToShow = new ArrayList<Note>();
-                    // This callback may be called twice, once for the cache and once for loading
-                    // the data from the server API, so we check before decrementing, otherwise
-                    // it throws "Counter has been corrupted!" exception.
-                    if (!EspressoIdlingResource.getIdlingResource().isIdleNow()) {
-                        EspressoIdlingResource.decrement(); // Set app as idle.
-                    }
-
-                    // We filter the tasks based on the requestType
-                    for (Note note : notes) {
-                        switch (mCurrentFiltering) {
-                           // case ALL_NOTES:
-                             //   notesToShow.add(note);
-                             //   break;
-                            default:
-                                notesToShow.add(note);
-                                break;
+        GetNotes.RequestValues requestValues= new GetNotes.RequestValues(forceUpdate);
+        mUseCaseHandler.execute(mGetNotes, requestValues,
+                new UseCase.UseCaseCallback<GetNotes.ResponseValue>() {
+                    @Override
+                    public void onSuccess(GetNotes.ResponseValue response) {
+                        List<Note> notes = response.getNotes();
+                        // The view may not be able to handle UI updates anymore
+                        if (showLoadingUI) {
+                            mNotesView.setLoadingIndicator(false);
                         }
+
+                        processNotes(notes);
                     }
-                    //some step required
-                    processNotes(notesToShow);
-                }
-                @Override
-                public void onDataNotAvailable() {
-                    mNotesView.showLoadingNotesError();
-                }
-            }
-        );
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
         if (showLoadingUI) {
             mNotesView.setLoadingIndicator(false);
         }
@@ -95,27 +84,12 @@ public class NotesPresenter implements NotesContract.Presenter{
             // Show the list of tasks
             mNotesView.showNotes(notes);
             // Set the filter label's text.
-            showFilterLabel();
-        }
-    }
-
-    private void showFilterLabel() {
-        switch (mCurrentFiltering) {
-            case ACTIVE_NOTES:
-                //mTasksView.showActiveFilterLabel();
-                break;
-            default:
-                mNotesView.showAllFilterLabel();
-                break;
+            //showFilterLabel();
         }
     }
 
     private void processEmptyTasks() {
-        switch (mCurrentFiltering) {
-            default:
-                mNotesView.showNoTasks();
-                break;
-        }
+        mNotesView.showNoTasks();
     }
 
     @Override
@@ -132,27 +106,35 @@ public class NotesPresenter implements NotesContract.Presenter{
 
     /**
      * Sets the current task filtering type.
-     *
-     * @param requestType Can be {@link NotesFilterType#ALL_NOTES},
-     *                    {@link NotesFilterType#COMPLETED_NOTES}, or
-     *                    {@link NotesFilterType#ACTIVE_NOTES}
-     */
+
     public void setFiltering(NotesFilterType requestType)
     {
-        mCurrentFiltering = requestType;
-    }
+        //mCurrentFiltering = requestType;
+    }*/
 
     @Override
     public void DeleteMarkedNotes(List<Note> markedNote) {
-        mNotesRepository.deleteMarkedNotes(markedNote);
-        mNotesView.showMarkedNotesDelete();
-        loadNotes(false,false);
-    }
+        DeleteNote.RequestValues requestValues= new DeleteNote.RequestValues(markedNote);
+        mUseCaseHandler.execute(mDeleteNote, requestValues,
+                new UseCase.UseCaseCallback<DeleteNote.ResponseValue>() {
+                    @Override
+                    public void onSuccess(DeleteNote.ResponseValue response) {
+                        mNotesView.showMarkedNotesDelete();
+                        loadNotes(false,false);
+                    }
 
+                    @Override
+                    public void onError() {
+
+                    }
+                }
+        );
+    }
+/*
     public NotesFilterType getFiltering()
     {
         return mCurrentFiltering;
-    }
+    }*/
 
     @Override
     public void start() {
