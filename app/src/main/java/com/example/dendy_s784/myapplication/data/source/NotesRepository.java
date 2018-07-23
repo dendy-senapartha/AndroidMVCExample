@@ -24,8 +24,6 @@ public class NotesRepository implements NotesDataSource{
     private static NotesRepository INSTANCE = null;
 
     //used to load remote data source from inet. no we dont use it yet
-    //private final NotesDataSource mNotesRemoteDataSource;
-
     private final NotesDataSource mNotesLocalDataSource;
 
     /**
@@ -40,9 +38,7 @@ public class NotesRepository implements NotesDataSource{
     boolean mCacheIsDirty = false;
 
     // Prevent direct instantiation.
-    private NotesRepository(//@NonNull NotesDataSource tasksRemoteDataSource,
-                            @NonNull NotesDataSource tasksLocalDataSource) {
-        //mNotesRemoteDataSource = checkNotNull(tasksRemoteDataSource);
+    private NotesRepository(@NonNull NotesDataSource tasksLocalDataSource) {
         mNotesLocalDataSource = checkNotNull(tasksLocalDataSource);
     }
 
@@ -53,10 +49,9 @@ public class NotesRepository implements NotesDataSource{
      * @param notesLocalDataSource  the device storage data source
      * @return the {@link NotesRepository} instance
      */
-    public static NotesRepository getInstance(//NotesDataSource notesRemoteDataSource,
-                                              NotesDataSource notesLocalDataSource) {
+    public static NotesRepository getInstance(NotesDataSource notesLocalDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new NotesRepository(/*notesRemoteDataSource,*/ notesLocalDataSource);
+            INSTANCE = new NotesRepository(notesLocalDataSource);
         }
         return INSTANCE;
     }
@@ -66,6 +61,7 @@ public class NotesRepository implements NotesDataSource{
      * next time it's called.
      */
     public static void destroyInstance() {
+        //mNotesLocalDataSource
         INSTANCE = null;
     }
 
@@ -99,7 +95,6 @@ public class NotesRepository implements NotesDataSource{
 
                 @Override
                 public void onDataNotAvailable() {
-                    //getNotesDataSource(callback);
                     callback.onDataNotAvailable();
                 }
             });

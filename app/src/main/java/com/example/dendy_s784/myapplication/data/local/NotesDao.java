@@ -24,6 +24,10 @@ public interface NotesDao {
      * Select all notes from the tasks table.
      *
      * @return all notes wraped with javarx Maybe.
+     * Maybe is a special kind of Observable which can only emit zero or one item,
+     * and report an error if the computation fails at some point.
+     * Maybe is similar to Single only difference being that it allows for no emissions as well.
+     * https://medium.com/@rohitsingh14101992/rxjava-single-maybe-and-completable-8686db42bac8
      */
     @Query("SELECT * FROM Notes")
     Maybe<List<Note>> getNotes();
@@ -33,6 +37,8 @@ public interface NotesDao {
      *
      * @param noteId the note id.
      * @return the note with noteId. Te result wraped with javarx Maybe.
+     * Maybe is a special kind of Observable which can only emit zero or one item,
+     * and report an error if the computation fails at some point.
      */
     @Query("SELECT * FROM Notes WHERE entryid = :noteId")
     Maybe<Note> getNoteById(String noteId);

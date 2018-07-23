@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         applicationId "com.example.dendy_s784.myapplication"
         minSdkVersion 26
@@ -35,6 +35,9 @@ dependencies {
     implementation "android.arch.persistence.room:rxjava2:$rootProject.roomVersion"
     compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+    //Depandencies injection
+    compile "com.google.dagger:dagger:$rootProject.dagger2"
+    annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.dagger2"
     // Dependencies for local unit tests
     testImplementation 'junit:junit:4.12'
     // Android Testing Support Library's runner and rules

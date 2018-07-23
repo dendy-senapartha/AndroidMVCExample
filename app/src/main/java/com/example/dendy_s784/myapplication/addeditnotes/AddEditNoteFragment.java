@@ -65,7 +65,6 @@ public class AddEditNoteFragment extends Fragment implements AddEditNoteContract
         return root;
     }
 
-
     @Override
     public void showEmptyNoteError() {
 

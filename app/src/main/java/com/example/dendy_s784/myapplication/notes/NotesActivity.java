@@ -1,5 +1,6 @@
 package com.example.dendy_s784.myapplication.notes;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -10,25 +11,40 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 
+import com.example.dendy_s784.myapplication.application.Application;
 import com.example.dendy_s784.myapplication.R;
+
+import com.example.dendy_s784.myapplication.notes.dagger.DaggerNotesComponent;
+import com.example.dendy_s784.myapplication.notes.dagger.NotesContextModule;
 import com.example.dendy_s784.myapplication.utils.ActivityUtils;
 import com.example.dendy_s784.myapplication.utils.Injection;
 
-public class NotesActivity extends AppCompatActivity {
+import javax.inject.Inject;
 
-    //private static final String CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY";
+public class NotesActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
 
-    private NotesPresenter mNotesPresenter;
+    @Inject
+    NotesPresenter mNotesPresenter;
 
+    @Inject
+    NotesFragment notesFragment;
+
+    Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notes_act);
+        //inject dependency
+        DaggerNotesComponent.builder().applicationComponent(Application.getComponent())
+                .notesContextModule(new NotesContextModule(this))
+                .build().inject(this);
 
+        //appContext = getApplicationContext();
+        //notesFragment = null;
         //setup the toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -46,6 +62,7 @@ public class NotesActivity extends AppCompatActivity {
         }
 
         //we using fragment
+        /*
         NotesFragment notesFragment = (NotesFragment) getSupportFragmentManager().
                 findFragmentById(R.id.contentFrame);
         if(notesFragment == null)
@@ -53,20 +70,13 @@ public class NotesActivity extends AppCompatActivity {
             //create fragment
             notesFragment = NotesFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), notesFragment,R.id.contentFrame);
-        }
+        }*/
 
         // Create the presenter
         //presenter will fill the fragment using data taken remotely or locally
-        mNotesPresenter = new NotesPresenter(
-                Injection.provideUseCaseHandler(),Injection.provideGetNotes(getApplicationContext()),
-                Injection.provideDeleteNote(getApplicationContext()),notesFragment);
-
-        /* Load previously saved state, if available.
-        if (savedInstanceState != null) {
-            NotesFilterType currentFiltering =
-                    (NotesFilterType) savedInstanceState.getSerializable(CURRENT_FILTERING_KEY);
-            mNotesPresenter.setFiltering(currentFiltering);
-        }*/
+        /*mNotesPresenter = new NotesPresenter(
+                Injection.provideUseCaseHandler(),Injection.provideGetNotes(appContext),
+                Injection.provideDeleteNote(appContext),notesFragment);*/
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

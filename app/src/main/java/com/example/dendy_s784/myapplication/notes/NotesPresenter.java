@@ -24,6 +24,24 @@ public class NotesPresenter implements NotesContract.Presenter{
     private final UseCaseHandler mUseCaseHandler;
     private boolean mFirstLoad = true;
 
+    public void onCreate() {
+
+    }
+
+    public void onDestroy() {
+
+    }
+
+    public NotesPresenter()
+    {
+
+        mNotesView = null;
+        mGetNotes = null;
+        mDeleteNote = null;
+        mUseCaseHandler = null;
+    }
+
+
     public NotesPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull GetNotes getNotes,
                           @NonNull DeleteNote deleteNote, @NonNull NotesContract.View notesView) {

@@ -12,9 +12,11 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -25,17 +27,13 @@ public class NotesLocalDataSource implements NotesDataSource{
 
     private NotesDao mNotesDao;
 
-    //private AppExecutors mAppExecutors;
-
     // Prevent direct instantiation.
-    private NotesLocalDataSource(//@NonNull AppExecutors appExecutors,
-                                 @NonNull NotesDao notesDao) {
-       // mAppExecutors = appExecutors;
+    private NotesLocalDataSource(@NonNull NotesDao notesDao) {
         mNotesDao = notesDao;
+
     }
 
-    public static NotesLocalDataSource getInstance(//@NonNull AppExecutors appExecutors,
-                                                   @NonNull NotesDao notesDao) {
+    public static NotesLocalDataSource getInstance(@NonNull NotesDao notesDao) {
         if (INSTANCE == null) {
             synchronized (NotesLocalDataSource.class) {
                 if (INSTANCE == null) {
@@ -56,7 +54,7 @@ public class NotesLocalDataSource implements NotesDataSource{
         //Load Notes from DB via its DAO
         //the implementation DAO are generated automatically by Room library
         // loading proccess are handled by RXjava
-        Disposable disposable = mNotesDao.getNotes()
+        mNotesDao.getNotes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Note>>() {
@@ -66,30 +64,6 @@ public class NotesLocalDataSource implements NotesDataSource{
                         callback.onNotesLoaded(notes);
                     }
                 });
-        /**
-        //create thread to load Notes from DB
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                //Load Notes from DB via its DAO
-                //the implementation DAO are generated automatically by Room library
-                final List<Note> notes = mNotesDao.getNotes();
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //if (notes.isEmpty()) {
-                            // This will be called if the table is new or just empty.
-                            //callback.onDataNotAvailable();
-                        //} else
-                            {
-                            callback.onNotesLoaded(notes);
-                        }
-                    }
-                });
-            }
-        };
-
-        mAppExecutors.diskIO().execute(runnable);*/
     }
 
     /**
@@ -101,7 +75,7 @@ public class NotesLocalDataSource implements NotesDataSource{
         //Load Notes from DB via its DAO
         //the implementation DAO are generated automatically by Room library
         // loading proccess are handled by RXjava
-        Disposable disposable = mNotesDao.getNoteById(noteId)
+        mNotesDao.getNoteById(noteId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Note>() {
@@ -111,32 +85,14 @@ public class NotesLocalDataSource implements NotesDataSource{
                         callback.onNoteLoaded(note);
                     }
                 });
-        /**
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                final Note note= mNotesDao.getNoteById(noteId);
-
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        //if (note != null) {
-                          //  callback.onNoteLoaded(note);
-                        //} else
-                            {
-                            callback.onDataNotAvailable();
-                        }
-                    }
-                });
-            }
-        };
-
-        mAppExecutors.diskIO().execute(runnable);*/
     }
 
     @Override
     public void saveNote(@NonNull final Note note) {
         checkNotNull(note);
+        //By using Completable we agree to ignore the onNext event and
+        // only handle onComplete and onError. The API client then becomes:
+        //https://android.jlelse.eu/making-your-rxjava-intentions-clearer-with-single-and-completable-f064d98d53a8
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
@@ -158,14 +114,6 @@ public class NotesLocalDataSource implements NotesDataSource{
                 Log.d("saveNote","onError"+e.getMessage());
             }
         });
-        /*
-        Runnable saveRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mNotesDao.insertNote(note);
-            }
-        };
-        mAppExecutors.diskIO().execute(saveRunnable);*/
     }
 
     @Override
@@ -196,20 +144,6 @@ public class NotesLocalDataSource implements NotesDataSource{
                     }
                 }
         );
-        /*
-        Runnable clearTasksRunnable = new Runnable() {
-            @Override
-            public void run() {
-                //need to delete based on list of marked item
-                int markedNoteSize = markedNote.size();
-                for(int i=0 ; i<markedNoteSize ; i++)
-                {
-                    mNotesDao.deleteNoteById(markedNote.get(i).getId());
-                }
-            }
-        };
-
-        mAppExecutors.diskIO().execute(clearTasksRunnable);*/
     }
 
     @Override
@@ -241,15 +175,6 @@ public class NotesLocalDataSource implements NotesDataSource{
                 Log.d("deleteAllNotes","onError"+e.getMessage());
             }
         });
-        /*
-        Runnable deleteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mNotesDao.deleteNotes();
-            }
-        };
-
-        mAppExecutors.diskIO().execute(deleteRunnable);*/
     }
 
     @Override
@@ -276,14 +201,5 @@ public class NotesLocalDataSource implements NotesDataSource{
                 Log.d("deleteNotes","onError"+e.getMessage());
             }
         });
-        /*
-        Runnable deleteRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mNotesDao.deleteNoteById(noteId);
-            }
-        };
-
-        mAppExecutors.diskIO().execute(deleteRunnable);*/
     }
 }

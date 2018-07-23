@@ -11,12 +11,8 @@ import com.example.dendy_s784.myapplication.addeditnotes.domain.usecase.GetNote;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class AddEditNotePresenter implements AddEditNoteContract.Presenter
+public class AddEditNotePresenter implements AddEditNoteContract.Presenter
 {
-
-    //@NonNull
-    //private final NotesDataSource mNotesRepository;
-
     @NonNull
     private final AddEditNoteContract.View mAddNoteView;
 
@@ -43,13 +39,29 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
                                 @NonNull AddEditNoteContract.View addNoteView, @NonNull GetNote getNote,
                                 @NonNull SaveNote saveNote, boolean shouldLoadDataFromRepo) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null!");
-        mNoteId = noteId;
-        //mNotesRepository = checkNotNull(noteRepository , "notesRepository cannot be null!");
+        mNoteId= noteId;
         mGetNote = checkNotNull(getNote, "getNote cannot be null!");
         mAddNoteView = checkNotNull(addNoteView, "mAddNoteView cannot be null!");
         mSaveNote = checkNotNull(saveNote, "saveNote cannot be null!");
-        mIsDataMissing = shouldLoadDataFromRepo;
+        setIsDataMissing(shouldLoadDataFromRepo);
 
+        mAddNoteView.setPresenter(this);
+    }
+
+    /**
+     * Creates a presenter for the add/edit view.
+     *
+     * @param getNote is a note usecase
+     * @param addNoteView the add/edit view
+     *
+     */
+    public AddEditNotePresenter(@NonNull UseCaseHandler useCaseHandler,
+                                @NonNull AddEditNoteContract.View addNoteView, @NonNull GetNote getNote,
+                                @NonNull SaveNote saveNote) {
+        mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null!");
+        mGetNote = checkNotNull(getNote, "getNote cannot be null!");
+        mAddNoteView = checkNotNull(addNoteView, "mAddNoteView cannot be null!");
+        mSaveNote = checkNotNull(saveNote, "saveNote cannot be null!");
         mAddNoteView.setPresenter(this);
     }
 
@@ -71,7 +83,6 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
         if (newNote.isEmpty()) {
             mAddNoteView.showEmptyNoteError();
         } else {
-           // mNotesRepository.saveNote(newNote);
             mUseCaseHandler.execute(mSaveNote, new SaveNote.RequestValues(newNote),
                     new UseCase.UseCaseCallback<SaveNote.ResponseValue>() {
                         @Override
@@ -81,7 +92,7 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
 
                         @Override
                         public void onError() {
-                            //showSaveError();
+
                         }
                     });
         }
@@ -100,13 +111,10 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
                         // After an edit, go back to the list.
                         mAddNoteView.showNotesList();
                     }
-
                     @Override
                     public void onError() {
-
                     }
                 });
-
     }
 
     @Override
@@ -126,8 +134,6 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
 
                     }
                 });
-
-      //  mNotesRepository.getNote(mNoteId, this);
     }
 
     @Override
@@ -137,7 +143,7 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
 
     @Override
     public void start() {
-        if (!isNewNote() && mIsDataMissing) {
+        if (!isNewNote() && isIsDataMissing()) {
             populateNote();
         }
     }
@@ -148,6 +154,23 @@ class AddEditNotePresenter implements AddEditNoteContract.Presenter
         mAddNoteView.setTitle(note.getTitle());
         mAddNoteView.setDescription(note.getDescription());
 
-        mIsDataMissing = false;
+        setIsDataMissing(false);
+    }
+
+    @Nullable
+    public String getNoteId() {
+        return mNoteId;
+    }
+
+    public void setNoteId(@Nullable String mNoteId) {
+        this.mNoteId = mNoteId;
+    }
+
+    public boolean isIsDataMissing() {
+        return mIsDataMissing;
+    }
+
+    public void setIsDataMissing(boolean mIsDataMissing) {
+        this.mIsDataMissing = mIsDataMissing;
     }
 }

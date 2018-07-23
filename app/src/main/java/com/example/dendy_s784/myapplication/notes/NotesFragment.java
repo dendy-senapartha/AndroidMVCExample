@@ -116,6 +116,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
             }
         });
 
+
         setHasOptionsMenu(true);
         return  root;
     }
@@ -142,16 +143,10 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     public void showNoteDetailsUi(String noteId) {
         // in it's own Activity, since it makes more sense that way and it gives us the flexibility
         // to show some Intent stubbing.
-
         Intent intent = new Intent(getContext(), AddEditNotesActivity.class);
         intent.putExtra(AddEditNoteFragment.ARGUMENT_EDIT_NOTE_ID, noteId);
         startActivityForResult(intent, REQUEST_EDIT_NOTE);
     }
-
-   /*/ @Override
-    public void showAllFilterLabel() {
-        mFilteringLabelView.setText(getResources().getString(R.string.label_all));
-    }*/
 
     @Override
     public void setLoadingIndicator(final boolean active) {
@@ -276,16 +271,6 @@ public class NotesFragment extends Fragment implements NotesContract.View {
             titleTV.setText(note.getTitleForList());
 
             CheckBox completeCB = (CheckBox) rowView.findViewById(R.id.complete);
-
-            // Active/completed task UI
-            /*completeCB.setChecked(note.isCompleted());
-            if (task.isCompleted()) {
-                rowView.setBackgroundDrawable(viewGroup.getContext()
-                        .getResources().getDrawable(R.drawable.list_completed_touch_feedback));
-            } else {
-                rowView.setBackgroundDrawable(viewGroup.getContext()
-                        .getResources().getDrawable(R.drawable.touch_feedback));
-            }*/
 
             completeCB.setOnClickListener(new View.OnClickListener() {
                 @Override
