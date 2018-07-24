@@ -1,6 +1,5 @@
 package com.example.dendy_s784.myapplication.notes;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,22 +15,28 @@ import com.example.dendy_s784.myapplication.R;
 
 import com.example.dendy_s784.myapplication.notes.dagger.DaggerNotesComponent;
 import com.example.dendy_s784.myapplication.notes.dagger.NotesContextModule;
-import com.example.dendy_s784.myapplication.utils.ActivityUtils;
-import com.example.dendy_s784.myapplication.utils.Injection;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class NotesActivity extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     @Inject
     NotesPresenter mNotesPresenter;
 
     @Inject
     NotesFragment notesFragment;
-
-    Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,40 +48,21 @@ public class NotesActivity extends AppCompatActivity {
                 .notesContextModule(new NotesContextModule(this))
                 .build().inject(this);
 
-        //appContext = getApplicationContext();
-        //notesFragment = null;
+        //load all defined UI from xml using Butterknife
+        ButterKnife.bind(this);
+
         //setup the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
         //setup the navigation drawer
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if(navigationView!=null)
         {
             setupDrawerContent(navigationView);
         }
-
-        //we using fragment
-        /*
-        NotesFragment notesFragment = (NotesFragment) getSupportFragmentManager().
-                findFragmentById(R.id.contentFrame);
-        if(notesFragment == null)
-        {
-            //create fragment
-            notesFragment = NotesFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), notesFragment,R.id.contentFrame);
-        }*/
-
-        // Create the presenter
-        //presenter will fill the fragment using data taken remotely or locally
-        /*mNotesPresenter = new NotesPresenter(
-                Injection.provideUseCaseHandler(),Injection.provideGetNotes(appContext),
-                Injection.provideDeleteNote(appContext),notesFragment);*/
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

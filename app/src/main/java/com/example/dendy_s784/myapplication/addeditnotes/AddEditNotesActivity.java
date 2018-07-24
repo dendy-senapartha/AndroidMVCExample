@@ -16,6 +16,9 @@ import com.example.dendy_s784.myapplication.utils.Injection;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class AddEditNotesActivity extends AppCompatActivity {
 
     public static final int REQUEST_ADD_NOTE = 1;
@@ -23,6 +26,8 @@ public class AddEditNotesActivity extends AppCompatActivity {
     public static final String SHOULD_LOAD_DATA_FROM_REPO_KEY = "SHOULD_LOAD_DATA_FROM_REPO_KEY";
 
     private ActionBar mActionBar;
+
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     @Inject
      AddEditNotePresenter mAddEditTaskPresenter;
@@ -34,14 +39,14 @@ public class AddEditNotesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addnote_act);
-
         //inject dependency
         DaggerAddEditNoteComponent.builder().applicationComponent(Application.getComponent())
                 .addEditNoteContextModule(new AddEditNoteContextModule(this))
                 .build().inject(this);
+        //BindView
+        ButterKnife.bind(this);
 
         // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mActionBar = getSupportActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);

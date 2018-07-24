@@ -30,6 +30,9 @@ import com.example.dendy_s784.myapplication.data.Note;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class NotesFragment extends Fragment implements NotesContract.View {
@@ -40,16 +43,16 @@ public class NotesFragment extends Fragment implements NotesContract.View {
     private NotesContract.Presenter mPresenter;
 
     private NotesAdapter mListAdapter;
-    private TextView mFilteringLabelView;
-    private LinearLayout mNotesView;
-    private View mNoNotesView;
-    private ImageView mNoNotesIcon;
-    private TextView mNoNotesMainView;
 
-    private TextView mNoNotesAddView;
+    @BindView(R.id.filteringLabel) TextView mFilteringLabelView;
+    @BindView(R.id.tasks_list) ListView listView;
+    @BindView(R.id.tasksLL) LinearLayout mNotesView;
+    @BindView(R.id.noTasks) View mNoNotesView;
+    @BindView(R.id.noTasksIcon) ImageView mNoNotesIcon;
+    @BindView(R.id.noTasksMain) TextView mNoNotesMainView;
+    @BindView(R.id.noTasksAdd) TextView mNoNotesAddView;
 
     private List<Note> mMarkedNotes;
-
 
     public static NotesFragment newInstance(){
         return new NotesFragment();
@@ -67,17 +70,14 @@ public class NotesFragment extends Fragment implements NotesContract.View {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.notes_frag, container, false);
 
+        ButterKnife.bind(this,root);
         // Set up tasks view
-        ListView listView = (ListView) root.findViewById(R.id.tasks_list);
+        //ListView listView = (ListView) root.findViewById(R.id.tasks_list);
         listView.setAdapter(mListAdapter);
-        mFilteringLabelView = (TextView) root.findViewById(R.id.filteringLabel);
-        mNotesView = (LinearLayout) root.findViewById(R.id.tasksLL);
 
+        //NON-ACTIVITY BINDING
+        //You can also perform binding on arbitrary objects by supplying your own view root.
         // Set up  no tasks view
-        mNoNotesView= root.findViewById(R.id.noTasks);
-        mNoNotesIcon = (ImageView) root.findViewById(R.id.noTasksIcon);
-        mNoNotesMainView = (TextView) root.findViewById(R.id.noTasksMain);
-        mNoNotesAddView = (TextView) root.findViewById(R.id.noTasksAdd);
         mNoNotesAddView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,9 +86,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         });
 
         // Set up floating action button
-        FloatingActionButton fab =
-                (FloatingActionButton) getActivity().findViewById(R.id.fab_add_note);
-
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_add_note);
         fab.setImageResource(R.drawable.ic_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +96,7 @@ public class NotesFragment extends Fragment implements NotesContract.View {
         });
 
         // Set up progress indicator
+        /**/
         final ScrollChildSwipeRefreshLayout swipeRefreshLayout =
                 (ScrollChildSwipeRefreshLayout) root.findViewById(R.id.refresh_layout);
         swipeRefreshLayout.setColorSchemeColors(

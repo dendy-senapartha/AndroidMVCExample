@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.example.dendy_s784.myapplication.R;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AddEditNoteFragment extends Fragment implements AddEditNoteContract.View{
@@ -21,9 +24,8 @@ public class AddEditNoteFragment extends Fragment implements AddEditNoteContract
 
     private AddEditNoteContract.Presenter mPresenter;
 
-    private TextView mTitle;
-
-    private TextView mDescription;
+    @BindView(R.id.add_task_title) TextView mTitle;
+    @BindView(R.id.add_task_description) TextView mDescription;
 
     public static AddEditNoteFragment newInstance() {
         return new AddEditNoteFragment();
@@ -59,8 +61,11 @@ public class AddEditNoteFragment extends Fragment implements AddEditNoteContract
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.addnote_frag, container, false);
-        mTitle = (TextView) root.findViewById(R.id.add_task_title);
-        mDescription = (TextView) root.findViewById(R.id.add_task_description);
+        //bind view
+        ButterKnife.bind(this, root);
+
+        //mTitle = (TextView) root.findViewById(R.id.add_task_title);
+        //mDescription = (TextView) root.findViewById(R.id.add_task_description);
         setHasOptionsMenu(true);
         return root;
     }
