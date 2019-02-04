@@ -17,7 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '27.0.3'
+    //buildToolsVersion '27.0.3'
     productFlavors {
     }
 }
@@ -25,26 +25,26 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     // App's dependencies, including test
-    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    compile "com.android.support:design:$rootProject.supportLibraryVersion"
-    compile "android.arch.persistence.room:runtime:$rootProject.roomVersion"
-    compile "com.google.guava:guava:$rootProject.guavaVersion"
-    compile "io.reactivex.rxjava2:rxjava:$rootProject.rxjava"
-    compile "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroid"
+    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
+    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
+    implementation "com.google.guava:guava:$rootProject.guavaVersion"
+    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjava"
+    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroid"
     implementation "android.arch.persistence.room:rxjava2:$rootProject.roomVersion"
-    compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
+    implementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
     //Depandencies injection
-    compile "com.google.dagger:dagger:$rootProject.dagger2"
+    implementation "com.google.dagger:dagger:$rootProject.dagger2"
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.dagger2"
     //view binding
-    compile "com.jakewharton:butterknife:$rootProject.butterknife"
+    implementation "com.jakewharton:butterknife:$rootProject.butterknife"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknife"
 
     // Dependencies for local unit tests
     testImplementation 'junit:junit:4.12'
     // Android Testing Support Library's runner and rules
-    androidTestCompile "com.android.support.test:runner:$rootProject.ext.runnerVersion"
-    androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runnerVersion"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
 }
